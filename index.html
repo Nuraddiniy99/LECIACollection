@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LECIA Collection</title>
+  <style>
+    :root{
+      --bg-pink: #ffd9e6; /* soft bright pink */
+      --white: #ffffff;
+      --black: #0b0b0b;
+      --dark-pink: #c81f6a;
+      --orange-btn: #ff7a00;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 8px 22px rgba(11,11,11,0.12);
+      --card-shadow-hover: 0 18px 40px rgba(11,11,11,0.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg-pink);
+      color:var(--black);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+    }
+
+    /* ---------- NAVBAR ---------- */
+    .topbar{
+      position:fixed;
+      left:0;right:0;top:0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 20px;
+      gap:12px;
+      z-index:60;
+      transition:all .28s cubic-bezier(.2,.9,.2,1);
+      background:transparent;
+    }
+    .topbar.scrolled{
+      backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+      box-shadow:0 6px 20px rgba(0,0,0,0.06);
+      padding:10px 18px;
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:12px;cursor:default;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--dark-pink),#ff6fa3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;box-shadow:0 6px 18px rgba(200,31,106,0.18);
+    }
+    .site-title{font-weight:700}
+
+    /* menu links desktop */
+    .menu{
+      display:flex;align-items:center;gap:14px;
+      transition:all .25s ease;
+    }
+    .menu a{
+      text-decoration:none;color:var(--black);padding:8px 12px;border-radius:8px;font-weight:600;transition:all .22s ease;
+    }
+    .menu a:hover{transform:translateY(-3px);}
+
+    /* capsule / hover effect when scrolled */
+    .topbar.scrolled .menu a{
+      border-radius:999px;padding:10px 18px;background:var(--glass);
+    }
+
+    /* three-dot button for mobile */
+    .menu-button{display:none;border:0;background:transparent;font-size:20px;padding:8px;cursor:pointer}
+
+    /* ---------- LAYOUT ---------- */
+    main{max-width:1200px;margin:120px auto 80px;padding:0 18px}
+
+    /* search */
+    .search-wrap{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+    .search{flex:1;display:flex;align-items:center;background:var(--white);padding:10px 12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .search input{border:0;outline:none;font-size:14px;width:100%;padding:6px}
+
+    /* grid */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .card{background:var(--white);border-radius:14px;overflow:hidden;box-shadow:var(--card-shadow);transition:transform .28s cubic-bezier(.2,.9,.2,1),box-shadow .28s}
+    .card:hover{transform:translateY(-8px);box-shadow:var(--card-shadow-hover)}
+
+    .thumb{width:100%;aspect-ratio:1/1;display:block;object-fit:cover;background:#ffeef7}
+    .card-body{padding:12px}
+    .product-title{font-weight:700;margin:6px 0 4px}
+    .product-desc{font-size:13px;line-height:1.3;color:#444}
+    .card-footer{display:flex;justify-content:space-between;align-items:center;padding:12px;border-top:1px solid #f4f4f6}
+    .btn-buy{background:var(--orange-btn);border:0;padding:10px 12px;border-radius:10px;color:#fff;font-weight:700;text-decoration:none}
+
+    /* card hover creativity: small badge pop */
+    .badge{
+      position:absolute;right:12px;top:12px;background:var(--dark-pink);color:#fff;padding:6px 8px;border-radius:999px;font-size:12px;transform:translateY(-6px);opacity:0;transition:all .28s
+    }
+    .card:hover .badge{transform:translateY(0);opacity:1}
+
+    /* mobile responsiveness */
+    @media (max-width:900px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .logo{width:40px;height:40px}
+    }
+    @media (max-width:640px){
+      .menu{display:none}
+      .menu-button{display:inline-flex}
+      .topbar{justify-content:space-between;}
+      .brand{flex:1;justify-content:center}
+      .brand .site-title{display:none}
+      main{margin-top:84px;padding:0 14px}
+      .grid{grid-template-columns:1fr}
+      .logo{margin-left:0}
+      .menu-button{position:absolute;left:14px}
+    }
+
+    /* slide-in mobile nav */
+    .mobile-nav{
+      position:fixed;left:-320px;top:0;bottom:0;width:320px;background:linear-gradient(180deg,var(--white),#fff);box-shadow:8px 0 30px rgba(0,0,0,0.12);z-index:80;padding:22px;transition:left .34s cubic-bezier(.2,.9,.2,1);
+    }
+    .mobile-nav.open{left:0}
+    .mobile-nav .close{position:absolute;right:12px;top:12px;border:0;background:transparent;font-size:22px}
+    .mobile-nav a{display:block;padding:12px 8px;margin:8px 0;border-radius:10px;font-weight:700;text-decoration:none;color:var(--black)}
+
+    /* about section */
+    .about{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.85));padding:40px;border-radius:14px;margin-top:30px}
+
+    footer{max-width:1200px;margin:40px auto 100px;padding:10px 18px;text-align:center;color:#333}
+
+    /* small helpers */
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <header class="topbar" id="topbar">
+  <button class="menu-button" id="openNav" aria-label="menu">⋯</button>
+  <div class="brand" aria-hidden="true">
+      <img src="https://lh3.googleusercontent.com/d/1OvJlNYqx_yvbTsQ1QFJAx-pYJH_a0hTQ=w800" alt="LEICA Logo" style="display:block;margin:auto;max-height:45px;" />
+    <div class="site-title">LEICA Collection</div>
+  </div>
+
+  <nav class="menu" id="desktopMenu">
+    <a href="#home" data-target="home">Katalog / Home</a>
+    <a href="#about" data-target="about">About me</a>
+  </nav>
+</header>
+
+
+  <!-- mobile slide nav -->
+  <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <button class="close" id="closeNav">✕</button>
+    <h3 style="margin-top:6px">Menu</h3>
+    <a href="#home" data-target="home" class="mobile-link">Katalog / Home</a>
+    <a href="#about" data-target="about" class="mobile-link">About me</a>
+  </aside>
+
+  <main>
+    <section id="home">
+      <div class="search-wrap">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right:8px;opacity:.6"><path d="M21 21l-4.35-4.35" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path><circle cx="11" cy="11" r="6" stroke="#666" stroke-width="2" fill="none"></circle></svg>
+          <input id="searchInput" placeholder="Cari produk berdasarkan nama..." aria-label="Cari produk" />
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="resetBtn" title="Reset filter" style="border:0;background:transparent;font-weight:700">Reset</button>
+        </div>
+      </div>
+
+      <div class="grid" id="productsGrid" aria-live="polite">
+        <!-- cards injected by JS -->
+      </div>
+    </section>
+
+    <section id="about" style="margin-top:26px">
+      <div class="about">
+        <h2>About me</h2>
+        <p>Halo! Saya pemilik toko demo. Halaman ini dibuat sesuai spesifikasi: warna, menu responsif, kartu produk dengan pencarian, dan tombol beli terhubung ke Shopee (contoh link). Data produk sekarang disimpan pada <code>data.json</code> di repository GitHub dan diambil langsung oleh halaman ini.</p>
+        <p>Untuk menambah produk, buka link langsung form: <em>(tidak tersedia lewat katalog)</em>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> LEICA Collection
+  </footer>
+
+  <script>
+    // ---------- CONFIG ----------
+    const GITHUB_RAW_DATA_JSON = 'https://raw.githubusercontent.com/Nuraddiniy99/LECIACollection/main/data.json';
+
+    const grid = document.getElementById('productsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const resetBtn = document.getElementById('resetBtn');
+    const yearSpan = document.getElementById('year');
+    yearSpan.textContent = new Date().getFullYear();
+
+    let dataProducts = [];
+
+    async function loadProducts(){
+      try{
+        const res = await fetch(GITHUB_RAW_DATA_JSON + '?t=' + Date.now());
+        if(!res.ok) throw new Error('Gagal mengambil data produk');
+        dataProducts = await res.json();
+      }catch(err){
+        console.error(err);
+        // fallback: kalau gagal, tampil sample statis (agar UI tetap hidup)
+        dataProducts = [
+          {id:1,name:'Sample Produk',desc:'Contoh deskripsi',img:'https://via.placeholder.com/600/fff0f0/000?text=SAMPLE',link:'#'}
+        ];
+      }
+      renderProducts(dataProducts);
+    }
+
+    function renderProducts(list){
+      grid.innerHTML = '';
+      if(!list.length){
+        grid.innerHTML = '<div style="grid-column:1/-1;padding:24px;background:rgba(255,255,255,0.6);border-radius:12px;text-align:center">Tidak ditemukan produk</div>'
+        return
+      }
+      list.forEach(p=>{
+        const el = document.createElement('article');
+        el.className='card';
+        el.innerHTML = `
+          <div style="position:relative">
+            <img src="${p.img}" alt="${escapeHtml(p.name)}" class="thumb" loading="lazy"/>
+            <div class="badge">BARU</div>
+          </div>
+          <div class="card-body">
+            <div class="product-title">${escapeHtml(p.name)}</div>
+            <div class="product-desc">${escapeHtml(p.desc)}</div>
+          </div>
+          <div class="card-footer">
+            <a class="btn-buy" href="${p.link || '#'}" target="_blank" rel="noopener">Beli di Shopee</a>
+            <div style="font-size:12px;color:#666">ID: ${p.id}</div>
+          </div>
+        `;
+        grid.appendChild(el);
+      })
+    }
+
+    // simple HTML escape for safety
+    function escapeHtml(s){
+      if(!s) return '';
+      return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});
+    }
+
+    // initial load
+    loadProducts();
+
+    // search by name (case-insensitive)
+    searchInput.addEventListener('input',e=>{
+      const q = e.target.value.trim().toLowerCase();
+      if(!q){ renderProducts(dataProducts); return }
+      const filtered = dataProducts.filter(p=>p.name.toLowerCase().includes(q));
+      renderProducts(filtered);
+    });
+    resetBtn.addEventListener('click',()=>{searchInput.value='';renderProducts(dataProducts)});
+
+    // sticky topbar behaviour on scroll
+    const topbar = document.getElementById('topbar');
+    window.addEventListener('scroll',()=>{
+      const y = window.scrollY;
+      if(y>8){ topbar.classList.add('scrolled')} else { topbar.classList.remove('scrolled') }
+    },{passive:true});
+
+    // mobile nav open/close
+    const openNav = document.getElementById('openNav');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeNav = document.getElementById('closeNav');
+
+    openNav.addEventListener('click',()=>{ mobileNav.classList.add('open'); mobileNav.setAttribute('aria-hidden','false') });
+    closeNav.addEventListener('click',()=>{ mobileNav.classList.remove('open'); mobileNav.setAttribute('aria-hidden','true') });
+
+    // close mobile nav on link click and handle anchor navigation
+    document.querySelectorAll('[data-target]').forEach(a=>{
+      a.addEventListener('click',e=>{
+        const t = e.currentTarget.getAttribute('data-target');
+        const section = document.getElementById(t);
+        if(section){
+          section.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+        // close mobile nav if open
+        mobileNav.classList.remove('open');
+      })
+    });
+
+    // accessibility: close nav by Escape
+    window.addEventListener('keydown',e=>{ if(e.key==='Escape') mobileNav.classList.remove('open') });
+
+  </script>
+</body>
+</html>

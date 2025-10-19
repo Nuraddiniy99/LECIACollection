@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tambah Produk — LECIA Collection</title>
+  <style>
+    :root{
+      --bg-pink: #ffd9e6;
+      --white: #ffffff;
+      --black: #0b0b0b;
+      --dark-pink: #c81f6a;
+      --orange-btn: #ff7a00;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 8px 22px rgba(11,11,11,0.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg-pink);
+      color:var(--black);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+    }
+    main{max-width:900px;margin:60px auto;padding:18px}
+    .card{background:var(--white);padding:18px;border-radius:14px;box-shadow:var(--card-shadow)}
+    h1{margin:0 0 6px}
+    .muted{color:#666;font-size:13px;margin-bottom:12px}
+    form{display:grid;gap:12px}
+    label{font-weight:700;font-size:14px}
+    input[type="text"], input[type="url"], textarea, input[type="password"], input[type="file"]{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #eee;background:#fff;font-size:14px;
+    }
+    textarea{min-height:100px;resize:vertical;padding-top:10px}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .btn{background:var(--orange-btn);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid #ddd;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .note{font-size:13px;color:#444}
+    .status{padding:10px;border-radius:10px;background:#fff;margin-top:8px;border:1px solid #f0f0f0}
+    a.small{font-size:13px;color:var(--dark-pink);text-decoration:none}
+    @media(max-width:700px){ .row{flex-direction:column} }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <h1>Tambah Produk Baru</h1>
+      <div class="muted">Form ini online — hanya dapat diakses oleh pemegang link + kode akses. Pastikan token GitHub kamu aman.</div>
+
+      <!-- Access gate -->
+      <div id="gate">
+        <label>Masukkan Kode Akses (password halaman)</label>
+        <input id="pagePassword" type="password" placeholder="Masukkan kode akses halaman..." />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="btnUnlock" class="btn">Buka Form</button>
+        </div>
+        <div class="note" style="margin-top:12px">
+          Kode akses dapat diganti di file <code>form.html</code> (baris PAGE_PASSWORD). Jika kamu ingin tingkat keamanan lebih tinggi, jangan bagikan link.
+        </div>
+      </div>
+
+      <form id="productForm" class="hidden" autocomplete="off">
+        <label>GitHub Personal Access Token</label>
+        <input id="ghToken" type="password" placeholder="Masukkan PAT GitHub (tidak disimpan)" required />
+        <div class="note">Token membutuhkan scope <code>repo</code> agar bisa upload file dan update data.json.</div>
+
+        <label>Nama Produk</label>
+        <input id="name" type="text" placeholder="Nama produk..." required />
+
+        <label>Deskripsi</label>
+        <textarea id="desc" placeholder="Deskripsi singkat..." required></textarea>
+
+        <div class="row">
+          <div class="col">
+            <label>Gambar (file)</label>
+            <input id="imgFile" type="file" accept="image/*" required />
+          </div>
+          <div class="col">
+            <label>Link (misal Shopee)</label>
+            <input id="link" type="url" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+          <button id="btnSubmit" class="btn" type="button">Tambah Produk</button>
+          <button id="btnReset" class="btn-ghost" type="button">Reset Form</button>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+      </form>
+
+      <hr style="margin:16px 0">
+
+      <div class="note">
+        Petunjuk singkat:
+        <ol>
+          <li>Buka halaman ini lewat link langsung. Masukkan kode akses halaman.</li>
+          <li>Masukkan GitHub PAT (hanya di browser kamu), isi nama, deskripsi, pilih gambar, dan link.</li>
+          <li>Tekan <strong>Tambah Produk</strong>. Proses akan upload gambar ke folder <code>Image/</code> di repo dan mengupdate <code>data.json</code>.</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /***********************
+     * CONFIG — UBAH SESUAI
+     ***********************/
+    const OWNER = 'Nuraddiniy99';
+    const REPO = 'LECIACollection';
+    const BRANCH = 'main'; // cabang utama
+    const IMAGES_FOLDER = 'Image'; // gunakan folder Image sesuai permintaan
+    // KODE HALAMAN: ubah sesuai yang Anda mau. (Password sederhana untuk membatasi akses)
+    const PAGE_PASSWORD = 'kodekamu123'; // <--- ganti ini sebelum dipublikasikan jika mau
+
+    /***********************
+     * UI
+     ***********************/
+    const gate = document.getElementById('gate');
+    const btnUnlock = document.getElementById('btnUnlock');
+    const pagePasswordInput = document.getElementById('pagePassword');
+
+    const form = document.getElementById('productForm');
+    const ghTokenInput = document.getElementById('ghToken');
+    const nameInput = document.getElementById('name');
+    const descInput = document.getElementById('desc');
+    const imgFileInput = document.getElementById('imgFile');
+    const linkInput = document.getElementById('link');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnReset = document.getElementById('btnReset');
+    const statusBox = document.getElementById('status');
+
+    function showStatus(msg, isError=false){
+      statusBox.classList.remove('hidden');
+      statusBox.style.borderColor = isError ? '#f3c6c6' : '#e7f6e7';
+      statusBox.style.background = isError ? '#fff6f6' : '#ffffff';
+      statusBox.textContent = msg;
+    }
+    function hideStatus(){ statusBox.classList.add('hidden'); statusBox.textContent=''; }
+
+    btnUnlock.addEventListener('click',()=>{
+      const v = pagePasswordInput.value.trim();
+      if(v === PAGE_PASSWORD){
+        gate.style.display = 'none';
+        form.classList.remove('hidden');
+      } else {
+        alert('Kode akses salah.');
+      }
+    });
+
+    btnReset.addEventListener('click',()=>{
+      nameInput.value=''; descInput.value=''; linkInput.value=''; imgFileInput.value=''; ghTokenInput.value=''; hideStatus();
+    });
+
+    /***********************
+     * HELPERS
+     ***********************/
+    function arrayBufferToBase64(buffer){
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function sanitizeFilename(name){
+      return name.replace(/[^a-z0-9\-\_\.]/gi, '-').toLowerCase();
+    }
+
+    async function fetchJson(url, options){
+      const res = await fetch(url, options);
+      const text = await res.text();
+      try {
+        return {ok: res.ok, status: res.status, json: text ? JSON.parse(text) : null, text};
+      } catch(e){
+        return {ok: res.ok, status: res.status, json:null, text};
+      }
+    }
+
+    /***********************
+     * GITHUB INTERACTIONS
+     ***********************/
+    // Upload file to repo (PUT to contents)
+    async function uploadFileToRepo(path, base64Content, token, message){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`;
+      const body = {
+        message: message || `Upload ${path}`,
+        content: base64Content,
+        branch: BRANCH
+      };
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + token,
+          'Accept': 'application/vnd.github+json'
+        },
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+
+    // Get file metadata (to read and get sha)
+    async function getRepoFile(path){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}?ref=${BRANCH}`;
+      const res = await fetch(url, {method:'GET', headers: {'Accept':'application/vnd.github+json'}});
+      if(res.status === 404) return null;
+      const j = await res.json();
+      return j;
+    }
+
+    // Update file with new content and sha
+    async function updateFileInRepo(path, base64Content, token, message, sha){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`;
+      const body = {
+        message: message || `Update ${path}`,
+        content: base64Content,
+        sha: sha,
+        branch: BRANCH
+      };
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + token,
+          'Accept': 'application/vnd.github+json'
+        },
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+
+    // Read raw data.json via raw.githubusercontent
+    async function fetchDataJsonRaw(){
+      const rawUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/data.json?t=${Date.now()}`;
+      const r = await fetch(rawUrl);
+      if(!r.ok) throw new Error('Gagal mengambil data.json dari repo');
+      const txt = await r.text();
+      return JSON.parse(txt);
+    }
+
+    /***********************
+     * SUBMIT HANDLER
+     ***********************/
+    btnSubmit.addEventListener('click', async ()=>{
+      hideStatus();
+      const token = ghTokenInput.value.trim();
+      const name = nameInput.value.trim();
+      const desc = descInput.value.trim();
+      const link = linkInput.value.trim();
+      const file = imgFileInput.files[0];
+
+      if(!token){ alert('Masukkan GitHub Personal Access Token.'); return; }
+      if(!name || !desc || !file){ alert('Lengkapi semua field (nama, deskripsi, gambar).'); return; }
+
+      try{
+        showStatus('Membaca file gambar...');
+
+        // baca file sebagai arrayBuffer -> base64
+        const arrayBuffer = await file.arrayBuffer();
+        const base64img = arrayBufferToBase64(arrayBuffer);
+        const filename = Date.now() + '-' + sanitizeFilename(file.name);
+        const imagePath = `${IMAGES_FOLDER}/${filename}`;
+
+        showStatus('Mengupload gambar ke repository... (proses bisa butuh beberapa detik)');
+
+        // upload image
+        const uploadResp = await uploadFileToRepo(imagePath, base64img, token, `Add image ${filename}`);
+        if(uploadResp && uploadResp.content && uploadResp.content.sha){
+          // success
+          showStatus('Gambar berhasil diupload. Mengambil URL gambar...');
+          const rawImageUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${IMAGES_FOLDER}/${encodeURIComponent(filename)}`;
+          // now update data.json
+          showStatus('Mengambil data.json saat ini...');
+          // get file metadata to obtain sha for update
+          const dataFileMeta = await getRepoFile('data.json');
+          let currentArray = [];
+          if(dataFileMeta && dataFileMeta.content){
+            // content is base64 encoded
+            const existingBase64 = dataFileMeta.content;
+            const existingText = atob(existingBase64.replace(/\n/g,''));
+            try{
+              currentArray = JSON.parse(existingText);
+              if(!Array.isArray(currentArray)) currentArray = [];
+            }catch(e){
+              currentArray = [];
+            }
+          } else {
+            // data.json doesn't exist — we'll create new
+            currentArray = [];
+          }
+
+          const newId = (currentArray.length>0) ? (Math.max(...currentArray.map(x=>Number(x.id)||0)) + 1) : 1;
+          const newItem = {
+            id: newId,
+            name: name,
+            desc: desc,
+            img: rawImageUrl,
+            link: link || '#'
+          };
+          currentArray.push(newItem);
+
+          const newText = JSON.stringify(currentArray, null, 2);
+          const newBase64 = btoa(unescape(encodeURIComponent(newText))); // UTF-8 safe
+
+          showStatus('Mengupdate data.json di repository...');
+
+          let updateResp;
+          if(dataFileMeta && dataFileMeta.sha){
+            // update existing
+            updateResp = await updateFileInRepo('data.json', newBase64, token, `Add product ${newId} ${name}`, dataFileMeta.sha);
+          } else {
+            // create new file
+            updateResp = await uploadFileToRepo('data.json', newBase64, token, `Create data.json and add product ${newId}`);
+          }
+
+          if(updateResp && (updateResp.content || updateResp.commit)){
+            showStatus('Sukses! Produk telah ditambahkan. ID: ' + newId + '\nCek katalog setelah beberapa detik (GitHub Pages butuh waktu sebentar untuk mem-publish).');
+            // reset form except token (optional)
+            nameInput.value=''; descInput.value=''; imgFileInput.value=''; linkInput.value='';
+          } else {
+            console.error(updateResp);
+            showStatus('Gagal mengupdate data.json. Lihat console untuk detail. Pastikan token punya izin repo.', true);
+          }
+
+        } else {
+          console.error(uploadResp);
+          showStatus('Gagal mengupload gambar. Lihat console untuk detail.', true);
+        }
+
+      }catch(err){
+        console.error(err);
+        showStatus('Terjadi error: ' + (err.message || err), true);
+      }
+    });
+
+  </script>
+</body>
+</html>
