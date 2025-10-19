@@ -567,9 +567,17 @@
       loadProductToForm(id);
     });
 
+         const topbar = document.getElementById('topbar');
+    window.addEventListener('scroll',()=>{
+      const y = window.scrollY;
+      if(y>8){ topbar.classList.add('scrolled'); }
+      else{ topbar.classList.remove('scrolled'); }
+    },{passive:true});
+
     // initial: do nothing until unlocked
 
   </script>
 </body>
 </html>
+
 
