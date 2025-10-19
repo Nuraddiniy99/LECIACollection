@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Produk — LECIA Collection</title>
+  <style>
+    :root{
+      --bg-pink: #ffd9e6;
+      --white: #ffffff;
+      --black: #0b0b0b;
+      --dark-pink: #c81f6a;
+      --orange-btn: #ff7a00;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 8px 22px rgba(11,11,11,0.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg-pink);
+      color:var(--black);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+    }
+    header{position:fixed;left:0;right:0;top:0;padding:14px 18px;background:transparent;display:flex;align-items:center;gap:12px;z-index:60}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--dark-pink),#ff6fa3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}
+    main{max-width:1100px;margin:100px auto 80px;padding:18px}
+    .card{background:var(--white);padding:18px;border-radius:14px;box-shadow:var(--card-shadow);margin-bottom:18px}
+    h1{margin:0 0 8px}
+    .muted{color:#666;font-size:13px;margin-bottom:12px}
+    form{display:grid;gap:12px}
+    label{font-weight:700;font-size:14px}
+    input[type="text"], input[type="url"], textarea, input[type="password"], input[type="file"]{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #eee;background:#fff;font-size:14px;
+    }
+    textarea{min-height:80px;resize:vertical}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .btn{background:var(--orange-btn);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid #ddd;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .note{font-size:13px;color:#444}
+    .status{padding:10px;border-radius:10px;background:#fff;margin-top:8px;border:1px solid #f0f0f0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .product-card{background:#fff;padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:8px}
+    .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;background:#ffeef7}
+    .actions{display:flex;gap:8px;margin-top:auto}
+    .small{font-size:12px;color:#666}
+    @media(max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:640px){ .grid{grid-template-columns:1fr} .row{flex-direction:column} header{padding:10px} main{margin-top:120px} }
+    .hidden{display:none}
+    .danger{background:#ff5a5a}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">EL</div>
+      <div>
+        <div style="font-weight:700">LECIA Collection — Manage</div>
+        <div class="small">Tambah / Edit / Hapus produk (akses link + kode)</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card" id="gateCard">
+      <h1>Masuk ke Halaman Manage</h1>
+      <div class="muted">Halaman ini untuk mengelola data produk. Masukkan kode akses halaman untuk membuka form.</div>
+      <label>Kode Akses Halaman</label>
+      <input id="pagePassword" type="password" placeholder="Masukkan kode akses..." />
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="btnUnlock" class="btn">Buka Halaman</button>
+        <button id="btnGotoForm" class="btn-ghost" style="display:none">Buka Form Tambah (alternatif)</button>
+      </div>
+      <div class="note" style="margin-top:10px">Kode akses sama dengan yang ada di <code>form.html</code>. Jika lupa, lihat file <code>form.html</code> atau ubah <code>PAGE_PASSWORD</code> di file tersebut.</div>
+    </div>
+
+    <div id="manageUI" class="hidden">
+      <div class="card">
+        <h2>Tambah / Edit Produk</h2>
+        <div class="muted">Masukkan GitHub PAT setiap sesi (token tidak disimpan). Token diperlukan saat menyimpan perubahan ke repository.</div>
+
+        <form id="productForm">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="flex:1">
+              <label>PAT</label>
+              <input id="ghToken" type="password" placeholder="Masukkan PAT GitHub (required saat ingin menyimpan)" />
+            </div>
+            <div style="width:160px">
+              <label>Operasi</label>
+              <select id="mode" style="width:100%;padding:10px;border-radius:10px">
+                <option value="add">Tambah Baru</option>
+                <option value="edit">Edit Produk</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="editSelector" class="hidden">
+            <label>Pilih Produk untuk Edit</label>
+            <select id="selectProduct" style="width:100%;padding:10px;border-radius:10px"></select>
+          </div>
+
+          <label>Nama Produk</label>
+          <input id="name" type="text" placeholder="Nama produk..." required />
+
+          <label>Deskripsi</label>
+          <textarea id="desc" placeholder="Deskripsi singkat..." required></textarea>
+
+          <div class="row">
+            <div class="col">
+              <label>Gambar (pilih file untuk upload baru)</label>
+              <input id="imgFile" type="file" accept="image/*" />
+            </div>
+            <div class="col">
+              <label>Atau URL Gambar (biarkan kosong jika pakai file upload)</label>
+              <input id="imgUrl" type="url" placeholder="https://..." />
+            </div>
+          </div>
+
+          <label>Link (misal Shopee)</label>
+          <input id="link" type="url" placeholder="https://..." />
+
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button id="btnSave" class="btn" type="button">Simpan Perubahan</button>
+            <button id="btnClear" class="btn-ghost" type="button">Kosongkan Form</button>
+            <button id="btnReload" class="btn-ghost" type="button">Refresh Daftar</button>
+          </div>
+
+          <div id="status" class="status hidden"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Daftar Produk</h2>
+        <div class="muted">Klik <em>Edit</em> untuk memuat data ke form. Klik <em>Hapus</em> untuk menghapus produk.</div>
+        <div id="productsGrid" class="grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ===========================
+    // CONFIG — UBAH JIKA PERLU
+    // ===========================
+    const OWNER = 'Nuraddiniy99';
+    const REPO = 'LECIACollection';
+    const BRANCH = 'main';
+    const IMAGES_FOLDER = 'Image';
+    // KODE HALAMAN (sama dengan form.html)
+    const PAGE_PASSWORD = 'kodekamu123'; // <-- sesuaikan jika kamu telah mengganti di form.html
+
+    // ===========================
+    // UI refs
+    // ===========================
+    const gateCard = document.getElementById('gateCard');
+    const btnUnlock = document.getElementById('btnUnlock');
+    const pagePasswordInput = document.getElementById('pagePassword');
+
+    const manageUI = document.getElementById('manageUI');
+    const ghTokenInput = document.getElementById('ghToken');
+    const modeSelect = document.getElementById('mode');
+    const editSelector = document.getElementById('editSelector');
+    const selectProduct = document.getElementById('selectProduct');
+
+    const nameInput = document.getElementById('name');
+    const descInput = document.getElementById('desc');
+    const imgFileInput = document.getElementById('imgFile');
+    const imgUrlInput = document.getElementById('imgUrl');
+    const linkInput = document.getElementById('link');
+
+    const btnSave = document.getElementById('btnSave');
+    const btnClear = document.getElementById('btnClear');
+    const btnReload = document.getElementById('btnReload');
+
+    const statusBox = document.getElementById('status');
+    const productsGrid = document.getElementById('productsGrid');
+
+    function showStatus(msg, isError=false){
+      statusBox.classList.remove('hidden');
+      statusBox.style.borderColor = isError ? '#f3c6c6' : '#e7f6e7';
+      statusBox.style.background = isError ? '#fff6f6' : '#ffffff';
+      statusBox.textContent = msg;
+    }
+    function hideStatus(){ statusBox.classList.add('hidden'); statusBox.textContent=''; }
+
+    // ===========================
+    // HELPERS
+    // ===========================
+    function sanitizeFilename(name){ return name.replace(/[^a-z0-9\-\_\.]/gi,'-').toLowerCase(); }
+    function arrayBufferToBase64(buffer){
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    }
+    function escapeHtml(s){
+      if(!s) return '';
+      return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});
+    }
+
+    // ===========================
+    // GITHUB helper functions
+    // ===========================
+    async function uploadFileToRepo(path, base64Content, token, message){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`;
+      const body = { message: message || `Upload ${path}`, content: base64Content, branch: BRANCH };
+      const res = await fetch(url, { method:'PUT', headers: {'Authorization': 'token ' + token,'Accept':'application/vnd.github+json'}, body: JSON.stringify(body) });
+      return res.json();
+    }
+
+    async function getRepoFile(path){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}?ref=${BRANCH}`;
+      const res = await fetch(url, { method:'GET', headers: {'Accept':'application/vnd.github+json'} });
+      if(res.status === 404) return null;
+      return await res.json();
+    }
+
+    async function updateFileInRepo(path, base64Content, token, message, sha){
+      const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`;
+      const body = { message: message || `Update ${path}`, content: base64Content, sha: sha, branch: BRANCH };
+      const res = await fetch(url, { method:'PUT', headers: {'Authorization': 'token ' + token,'Accept':'application/vnd.github+json'}, body: JSON.stringify(body) });
+      return res.json();
+    }
+
+    async function fetchDataJsonRaw(){
+      const rawUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/data.json?t=${Date.now()}`;
+      const r = await fetch(rawUrl);
+      if(!r.ok) throw new Error('Gagal mengambil data.json');
+      const txt = await r.text();
+      return JSON.parse(txt);
+    }
+
+    // ===========================
+    // App state & helpers
+    // ===========================
+    let dataProducts = [];
+
+    async function loadAndRenderProducts(){
+      showStatus('Memuat data produk...');
+      try{
+        // get data.json via raw (fast)
+        dataProducts = await fetchDataJsonRaw();
+        if(!Array.isArray(dataProducts)) dataProducts = [];
+      }catch(err){
+        console.warn('fetch raw failed, try API metadata', err);
+        // fallback: try to use API content (may need unauthenticated)
+        try{
+          const meta = await getRepoFile('data.json');
+          if(meta && meta.content){
+            const existingBase64 = meta.content;
+            const existingText = atob(existingBase64.replace(/\n/g,''));
+            dataProducts = JSON.parse(existingText || '[]');
+          } else dataProducts = [];
+        }catch(e){
+          console.error(e);
+          dataProducts = [];
+        }
+      }
+      hideStatus();
+      renderProductsList();
+      populateSelect();
+    }
+
+    function renderProductsList(){
+      productsGrid.innerHTML = '';
+      if(!dataProducts.length){
+        productsGrid.innerHTML = '<div style="grid-column:1/-1;padding:12px;background:rgba(255,255,255,0.6);border-radius:10px">Belum ada produk</div>';
+        return;
+      }
+      dataProducts.forEach(p=>{
+        const card = document.createElement('div');
+        card.className='product-card';
+        card.innerHTML = `
+          <img src="${escapeHtml(p.img || '')}" class="thumb" alt="${escapeHtml(p.name||'')}" onerror="this.src='https://via.placeholder.com/600/fff0f0/000?text=NO+IMG'"/>
+          <div style="font-weight:700">${escapeHtml(p.name || '')}</div>
+          <div class="small">${escapeHtml(p.desc || '')}</div>
+          <div class="small">ID: ${p.id}</div>
+          <div class="actions">
+            <button class="btn btn-edit" data-id="${p.id}">✏️ Edit</button>
+            <button class="btn btn-delete danger" data-id="${p.id}" style="background:#ff7a7a;color:#fff;border:0">🗑️ Hapus</button>
+            <a class="btn-ghost" href="${p.link || '#'}" target="_blank">Buka Link</a>
+          </div>
+        `;
+        productsGrid.appendChild(card);
+      });
+      // attach handlers
+      document.querySelectorAll('.btn-edit').forEach(b=>{
+        b.addEventListener('click', ()=> {
+          const id = Number(b.getAttribute('data-id'));
+          loadProductToForm(id);
+        });
+      });
+      document.querySelectorAll('.btn-delete').forEach(b=>{
+        b.addEventListener('click', ()=> {
+          const id = Number(b.getAttribute('data-id'));
+          if(confirm('Yakin ingin menghapus produk ID ' + id + '?')) deleteProduct(id);
+        });
+      });
+    }
+
+    function populateSelect(){
+      selectProduct.innerHTML = '';
+      const opt = document.createElement('option'); opt.value=''; opt.text='-- pilih produk --'; selectProduct.appendChild(opt);
+      dataProducts.forEach(p=>{
+        const o = document.createElement('option');
+        o.value = p.id;
+        o.text = `${p.id} — ${p.name}`;
+        selectProduct.appendChild(o);
+      });
+    }
+
+    function loadProductToForm(id){
+      const p = dataProducts.find(x => Number(x.id) === Number(id));
+      if(!p){ alert('Produk tidak ditemukan'); return; }
+      modeSelect.value = 'edit';
+      editModeToggle();
+      selectProduct.value = p.id;
+      nameInput.value = p.name || '';
+      descInput.value = p.desc || '';
+      imgUrlInput.value = p.img || '';
+      linkInput.value = p.link || '';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // ===========================
+    // Event handlers
+    // ===========================
+    btnUnlock.addEventListener('click', ()=>{
+      const v = pagePasswordInput.value.trim();
+      if(v === PAGE_PASSWORD){
+        gateCard.style.display = 'none';
+        manageUI.classList.remove('hidden');
+        loadAndRenderProducts();
+      } else {
+        alert('Kode akses salah.');
+      }
+    });
+
+    modeSelect.addEventListener('change', ()=> editModeToggle());
+    function editModeToggle(){
+      if(modeSelect.value === 'edit'){
+        editSelector.classList.remove('hidden');
+      } else {
+        editSelector.classList.add('hidden');
+        selectProduct.value = '';
+      }
+    }
+
+    btnClear.addEventListener('click', ()=> {
+      modeSelect.value = 'add';
+      editModeToggle();
+      selectProduct.value = '';
+      nameInput.value = ''; descInput.value = ''; imgFileInput.value=''; imgUrlInput.value=''; linkInput.value='';
+      hideStatus();
+    });
+
+    btnReload.addEventListener('click', ()=> loadAndRenderProducts());
+
+    // ===========================
+    // Save / Add / Edit / Delete logic
+    // ===========================
+    async function deleteProduct(id){
+      hideStatus();
+      try{
+        showStatus('Menghapus produk...');
+        // get current data.json metadata (to obtain sha)
+        const meta = await getRepoFile('data.json');
+        let currentArray = [];
+        if(meta && meta.content){
+          const txt = atob(meta.content.replace(/\n/g,''));
+          currentArray = JSON.parse(txt || '[]');
+        } else {
+          showStatus('Tidak dapat menemukan data.json di repo.', true);
+          return;
+        }
+        const newArr = currentArray.filter(x => Number(x.id) !== Number(id));
+        const newText = JSON.stringify(newArr, null, 2);
+        const newBase64 = btoa(unescape(encodeURIComponent(newText)));
+        const token = ghTokenInput.value.trim();
+        if(!token){ alert('Masukkan GitHub PAT untuk menghapus.'); return; }
+
+        const upd = await updateFileInRepo('data.json', newBase64, token, `Delete product ${id}`, meta.sha);
+        if(upd && (upd.content || upd.commit)){
+          showStatus('Produk berhasil dihapus. ID: ' + id);
+          await loadAndRenderProducts();
+        } else {
+          console.error(upd);
+          showStatus('Gagal menghapus produk. Periksa token & izin.', true);
+        }
+      }catch(err){
+        console.error(err);
+        showStatus('Error saat menghapus: ' + (err.message||err), true);
+      }
+    }
+
+    async function saveProduct(){
+      hideStatus();
+      const mode = modeSelect.value;
+      const token = ghTokenInput.value.trim();
+      if(!token){ alert('Masukkan GitHub PAT (required)'); return; }
+
+      const name = nameInput.value.trim();
+      const desc = descInput.value.trim();
+      const link = linkInput.value.trim() || '#';
+      const file = imgFileInput.files[0];
+      const imgUrl = imgUrlInput.value.trim();
+
+      if(!name || !desc){ alert('Lengkapi nama dan deskripsi.'); return; }
+
+      try{
+        showStatus('Mengambil data.json saat ini...');
+        // get metadata to obtain sha and current content
+        const meta = await getRepoFile('data.json');
+        let currentArray = [];
+        if(meta && meta.content){
+          const txt = atob(meta.content.replace(/\n/g,''));
+          currentArray = JSON.parse(txt || '[]');
+          if(!Array.isArray(currentArray)) currentArray = [];
+        } else {
+          // no data.json — create new array
+          currentArray = [];
+        }
+
+        // upload image first if file provided
+        let finalImgUrl = imgUrl || '';
+        if(file){
+          showStatus('Mengupload gambar ke repo...');
+          const arrayBuffer = await file.arrayBuffer();
+          const base64img = arrayBufferToBase64(arrayBuffer);
+          const filename = Date.now() + '-' + sanitizeFilename(file.name);
+          const imagePath = `${IMAGES_FOLDER}/${filename}`;
+          const uploadResp = await uploadFileToRepo(imagePath, base64img, token, `Add image ${filename}`);
+          if(uploadResp && uploadResp.content && uploadResp.content.sha){
+            finalImgUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${IMAGES_FOLDER}/${encodeURIComponent(filename)}`;
+          } else {
+            console.error(uploadResp);
+            showStatus('Gagal mengupload gambar. Pastikan token punya izin repo.', true);
+            return;
+          }
+        }
+
+        if(mode === 'add'){
+          // compute new id
+          const newId = (currentArray.length>0) ? (Math.max(...currentArray.map(x=>Number(x.id)||0)) + 1) : 1;
+          const newItem = { id: newId, name: name, desc: desc, img: finalImgUrl || '#', link: link };
+          currentArray.push(newItem);
+          const newText = JSON.stringify(currentArray, null, 2);
+          const newBase64 = btoa(unescape(encodeURIComponent(newText)));
+          // either update existing or create new file
+          let resp;
+          if(meta && meta.sha){
+            resp = await updateFileInRepo('data.json', newBase64, token, `Add product ${newId} ${name}`, meta.sha);
+          } else {
+            resp = await uploadFileToRepo('data.json', newBase64, token, `Create data.json and add product ${newId}`);
+          }
+          if(resp && (resp.content || resp.commit)){
+            showStatus('Produk baru berhasil ditambahkan. ID: ' + newId);
+            btnClear.click();
+            await loadAndRenderProducts();
+          } else {
+            console.error(resp); showStatus('Gagal menambahkan produk. Cek console.', true);
+          }
+        } else {
+          // edit mode
+          const selId = Number(selectProduct.value);
+          if(!selId){ alert('Pilih produk yang ingin diedit'); return; }
+          const idx = currentArray.findIndex(x => Number(x.id) === selId);
+          if(idx === -1){ showStatus('Produk tidak ditemukan di data.json', true); return; }
+          // update fields (if finalImgUrl present then replace)
+          currentArray[idx].name = name;
+          currentArray[idx].desc = desc;
+          if(finalImgUrl) currentArray[idx].img = finalImgUrl;
+          currentArray[idx].link = link;
+          const newText = JSON.stringify(currentArray, null, 2);
+          const newBase64 = btoa(unescape(encodeURIComponent(newText)));
+          // update
+          if(meta && meta.sha){
+            const upd = await updateFileInRepo('data.json', newBase64, token, `Edit product ${selId} ${name}`, meta.sha);
+            if(upd && (upd.content || upd.commit)){
+              showStatus('Produk berhasil diperbarui. ID: ' + selId);
+              await loadAndRenderProducts();
+            } else {
+              console.error(upd);
+              showStatus('Gagal memperbarui produk. Cek token & console.', true);
+            }
+          } else {
+            showStatus('data.json tidak ditemukan untuk update.', true);
+          }
+        }
+
+      }catch(err){
+        console.error(err);
+        showStatus('Terjadi error: ' + (err.message || err), true);
+      }
+    }
+
+    btnSave.addEventListener('click', saveProduct);
+
+    // on select change -> load item into form (optional)
+    selectProduct.addEventListener('change', ()=>{
+      const id = Number(selectProduct.value);
+      if(!id) return;
+      loadProductToForm(id);
+    });
+
+    // initial: do nothing until unlocked
+
+  </script>
+</body>
+</html>
