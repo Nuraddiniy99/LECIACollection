@@ -126,31 +126,37 @@
 </header>
 
   <main>
-    <div class="card" id="gateCard">
-      <h1>Masuk ke Halaman Manage</h1>
-      <div class="muted">Halaman ini untuk mengelola data produk. Masukkan kode akses halaman untuk membuka form.</div>
-      <label>Kode Akses Halaman</label>
-      <input id="pagePassword" type="password" placeholder="Masukkan kode akses..." />
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button id="btnUnlock" class="btn">Buka Halaman</button>
-        <button id="btnGotoForm" class="btn-ghost" style="display:none">Buka Form Tambah (alternatif)</button>
-      </div>
-      <div class="note" style="margin-top:10px">Kode akses sama dengan yang ada di <code>form.html</code>. Jika lupa, lihat file <code>form.html</code> atau ubah <code>PAGE_PASSWORD</code> di file tersebut.</div>
-    </div>
+<div class="card" id="gateCard" style="max-width:400px;margin:10px auto;padding:40px;border-radius:18px;background:linear-gradient(145deg,#fff,rgba(255,217,230,0.7));box-shadow:0 10px 28px rgba(0,0,0,0.08);text-align:center;animation:fadeIn .8s ease;">
+  <h1 style="margin:0 0 10px;font-size:1.6em;color:var(--dark-pink);letter-spacing:.5px;">Login Admin Dashboard</h1>
+  <div class="muted" style="color:#555;margin-bottom:22px;font-size:14px;">Halaman ini untuk mengelola data produk. Dan hanya admin yang diperbolehkan mengaksesnya.</div>
+  <label for="pagePassword" style="display:block;text-align:left;font-weight:600;margin-bottom:6px;color:#333;">Masukan kode akses</label>
+  <input id="pagePassword" type="password" placeholder="Masukkan kode disini..." style="width:100%;padding:12px 14px;border:2px solid #f4b6cf;border-radius:10px;font-size:14px;outline:none;transition:border-color .25s,box-shadow .25s;" onfocus="this.style.borderColor='#c81f6a';this.style.boxShadow='0 0 0 3px rgba(200,31,106,0.15)'" onblur="this.style.borderColor='#f4b6cf';this.style.boxShadow='none'"/>
+  <div style="display:flex;gap:10px;margin-top:20px;justify-content:center;">
+    <button id="btnUnlock" class="btn" style="background:var(--dark-pink);color:white;border:0;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;transition:transform .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 14px rgba(200,31,106,0.25)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">Buka Halaman</button>
+    <button id="btnGotoForm" class="btn-ghost" style="display:none;background:transparent;border:2px solid var(--dark-pink);color:var(--dark-pink);padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;transition:all .25s;" onmouseover="this.style.backgroundColor='var(--dark-pink)';this.style.color='white'" onmouseout="this.style.backgroundColor='transparent';this.style.color='var(--dark-pink)'">Buka Form Tambah (alternatif)</button>
+  </div>
+</div>
+
+<style>
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
+
 
     <div id="manageUI" class="hidden">
       <div class="card">
-        <h2>Tambah / Edit Produk</h2>
-        <div class="muted">Masukkan GitHub PAT setiap sesi (token tidak disimpan). Token diperlukan saat menyimpan perubahan ke repository.</div>
+        <h2 style="text-align: center; color: #873a3a;">Tambah / Edit Produk</h2>
 
         <form id="productForm">
           <div style="display:flex;gap:12px;align-items:center">
             <div style="flex:1">
-              <label>PAT</label>
-              <input id="ghToken" type="password" placeholder="Masukkan PAT GitHub (required saat ingin menyimpan)" />
+              <label style="margin-bottom:10px; display:block;">Masukan Token</label>
+              <input id="ghToken" type="password" placeholder="Masukan Token" />
             </div>
             <div style="width:160px">
-              <label>Operasi</label>
+              <label style="margin-bottom:10px; display:block;">Pilih tindakan</label>
               <select id="mode" style="width:100%;padding:10px;border-radius:10px">
                 <option value="add">Tambah Baru</option>
                 <option value="edit">Edit Produk</option>
@@ -170,23 +176,26 @@
           <textarea id="desc" placeholder="Deskripsi singkat..." required></textarea>
 
           <div class="row">
-            <div class="col">
-              <label>Gambar (pilih file untuk upload baru)</label>
-              <input id="imgFile" type="file" accept="image/*" />
-            </div>
-            <div class="col">
-              <label>Atau URL Gambar (biarkan kosong jika pakai file upload)</label>
+<div class="col" style="display:flex;flex-direction:column;gap:5px;">
+  <label style="font-weight:600;color:#c81f6a;">Upload Gambar</label>
+  <input id="imgFile" type="file" accept="image/*" style="padding:8px 12px;border-radius:10px;border:1px solid #ccc;background:#fff;transition:all .22s ease;cursor:pointer;" 
+         onmouseover="this.style.borderColor='#c81f6a'" 
+         onmouseout="this.style.borderColor='#ccc'" />
+</div>
+
+            <div class="col" style="display:none">
+              <label>Atau URL Gambar</label>
               <input id="imgUrl" type="url" placeholder="https://..." />
             </div>
           </div>
 
-          <label>Link (misal Shopee)</label>
+          <label>Link Affiliate</label>
           <input id="link" type="url" placeholder="https://..." />
 
           <div style="display:flex;gap:8px;margin-top:6px">
-            <button id="btnSave" class="btn" type="button">Simpan Perubahan</button>
-            <button id="btnClear" class="btn-ghost" type="button">Kosongkan Form</button>
-            <button id="btnReload" class="btn-ghost" type="button">Refresh Daftar</button>
+            <button id="btnSave" class="btn" type="button">Simpan</button>
+            <button id="btnClear" class="btn-ghost" type="button">Bersihkan</button>
+            <button id="btnReload" class="btn-ghost" type="button" style="background:#007bff;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:16px;transition:transform 0.7s;" onclick="this.style.transform='rotate(360deg)';setTimeout(()=>{this.style.transform='rotate(0deg)'},700)">⟳</button>
           </div>
 
           <div id="status" class="status hidden"></div>
@@ -194,7 +203,7 @@
       </div>
 
       <div class="card">
-        <h2>Daftar Produk</h2>
+        <h2 style="text-align: center; color: #873a3a;">Daftar Produk</h2>
         <div class="muted">Klik <em>Edit</em> untuk memuat data ke form. Klik <em>Hapus</em> untuk menghapus produk.</div>
         <div id="productsGrid" class="grid"></div>
       </div>
@@ -210,7 +219,7 @@
     const BRANCH = 'main';
     const IMAGES_FOLDER = 'Image';
     // KODE HALAMAN (sama dengan form.html)
-    const PAGE_PASSWORD = 'kodekamu123'; // <-- sesuaikan jika kamu telah mengganti di form.html
+    const PAGE_PASSWORD = 'aleycia'; // <-- sesuaikan jika kamu telah mengganti di form.html
 
     // ===========================
     // UI refs
@@ -340,9 +349,9 @@
           <div class="small">${escapeHtml(p.desc || '')}</div>
           <div class="small">ID: ${p.id}</div>
           <div class="actions">
-            <button class="btn btn-edit" data-id="${p.id}">✏️ Edit</button>
-            <button class="btn btn-delete danger" data-id="${p.id}" style="background:#ff7a7a;color:#fff;border:0">🗑️ Hapus</button>
-            <a class="btn-ghost" href="${p.link || '#'}" target="_blank">Buka Link</a>
+            <button class="btn btn-edit" data-id="${p.id}">Edit</button>
+            <button class="btn btn-delete danger" data-id="${p.id}" style="background:#F54927;color:#fff;border:0">Hapus</button>
+            <a href="${p.link || '#'}" target="_blank" style="display:inline-flex;align-items:center; font-size:13px; gap:6px;padding:10px 14px;background:#007bff;color:#fff;font-weight:600;border-radius:8px;text-decoration:none;transition:all .22s ease;">Cek Link<span style="display:inline-block;">↗</span></a>
           </div>
         `;
         productsGrid.appendChild(card);
@@ -574,10 +583,31 @@
       else{ topbar.classList.remove('scrolled'); }
     },{passive:true});
 
+
+    const imgFile = document.getElementById('imgFile');
+    const imgUrl = document.getElementById('imgUrl');
+
+    // jika upload file diisi, matikan URL
+    imgFile.addEventListener('change', () => {
+      if (imgFile.files.length > 0) {
+        imgUrl.value = '';
+        imgUrl.disabled = true;
+      } else {
+        imgUrl.disabled = false;
+      }
+    });
+
+    // jika URL diisi, matikan upload file
+    imgUrl.addEventListener('input', () => {
+      if (imgUrl.value.trim() !== '') {
+        imgFile.value = '';
+        imgFile.disabled = true;
+      } else {
+        imgFile.disabled = false;
+      }
+    });
     // initial: do nothing until unlocked
 
   </script>
 </body>
 </html>
-
-

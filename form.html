@@ -48,17 +48,16 @@
   <main>
     <div class="card">
       <h1>Tambah Produk Baru</h1>
-      <div class="muted">Form ini online — hanya dapat diakses oleh pemegang link + kode akses. Pastikan token GitHub kamu aman.</div>
 
       <!-- Access gate -->
       <div id="gate">
-        <label>Masukkan Kode Akses (password halaman)</label>
+        <label>Masukkan Kode Akses</label>
         <input id="pagePassword" type="password" placeholder="Masukkan kode akses halaman..." />
         <div style="display:flex;gap:8px;margin-top:8px">
           <button id="btnUnlock" class="btn">Buka Form</button>
         </div>
         <div class="note" style="margin-top:12px">
-          Kode akses dapat diganti di file <code>form.html</code> (baris PAGE_PASSWORD). Jika kamu ingin tingkat keamanan lebih tinggi, jangan bagikan link.
+
         </div>
       </div>
 
@@ -114,7 +113,7 @@
     const BRANCH = 'main'; // cabang utama
     const IMAGES_FOLDER = 'Image'; // gunakan folder Image sesuai permintaan
     // KODE HALAMAN: ubah sesuai yang Anda mau. (Password sederhana untuk membatasi akses)
-    const PAGE_PASSWORD = 'kodekamu123'; // <--- ganti ini sebelum dipublikasikan jika mau
+    const PAGE_PASSWORD = 'Aleycia25'; // <--- ganti ini sebelum dipublikasikan jika mau
 
     /***********************
      * UI
