@@ -4,149 +4,90 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Manage Produk — LECIA Collection</title>
- <style>
-  :root{
-    --bg-pink:#ffd9e6;
-    --white:#ffffff;
-    --black:#0b0b0b;
-    --dark-pink:#c60000;
-    --orange-btn:#16a440;
-    --glass:rgba(255,255,255,0.6);
-    --card-shadow:0 8px 22px rgba(11,11,11,0.12);
-  }
-
-  *{box-sizing:border-box}
-
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
-    background:var(--bg-pink);
-    color:var(--black);
-    -webkit-font-smoothing:antialiased;
-  }
-
-  /* ---------- HEADER (modern glass style) ---------- */
-  header{
-    position:fixed;
-    top:0;left:0;right:0;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    justify-content:space-between;
-    padding:14px 20px;
-    z-index:60;
-    transition:all .28s cubic-bezier(.2,.9,.2,1);
-    background:transparent;
-  }
-
-  header.scrolled{
-    backdrop-filter:blur(6px);
-    background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,255,255,0.7));
-    box-shadow:0 6px 20px rgba(0,0,0,0.06);
-    padding:10px 18px;
-  }
-
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
-
-  .logo{
-    width:44px;
-    height:44px;
-    border-radius:10px;
-    background:linear-gradient(135deg,var(--dark-pink),#ff6fa3);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-weight:700;
-    font-size:18px;
-    box-shadow:0 6px 18px rgba(200,31,106,0.18);
-  }
-
-  .brand div:first-child{
-    font-weight:700;
-  }
-
-  main{
-    max-width:1100px;
-    margin:120px auto 80px;
-    padding:18px;
-  }
-
-  /* ---------- FORM + KONTEN ---------- */
-  .card{background:var(--white);padding:18px;border-radius:14px;box-shadow:var(--card-shadow);margin-bottom:18px}
-  h1{font-size:25px;margin:0 0 8px;text-align:center;}
-  .muted{color:#666;font-size:13px;margin-bottom:12px}
-  form{display:grid;gap:12px}
-  label{font-weight:700;font-size:14px}
-  input[type="text"],input[type="url"],textarea,input[type="password"],input[type="file"]{
-    width:100%;padding:10px;border-radius:10px;border:1px solid #eee;background:#fff;font-size:14px;
-  }
-  textarea{min-height:80px;resize:vertical}
-  .row{display:flex;gap:12px}
-  .col{flex:1}
-  .btn{background:var(--orange-btn);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
-  .btn-ghost{background:transparent;border:1px solid #ddd;padding:10px 14px;border-radius:10px;cursor:pointer}
-  .note{font-size:13px;color:#444}
-  .status{padding:10px;border-radius:10px;background:#fff;margin-top:8px;border:1px solid #f0f0f0}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
-  .product-card{background:#fff;padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:8px}
-  .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;background:#ffeef7}
-  .actions{display:flex;gap:8px;margin-top:auto}
-  .small{font-size:12px;color:#666}
-  @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:640px){
-    .grid{grid-template-columns:1fr}
-    .row{flex-direction:column}
-    header{padding:10px}
-    main{margin-top:100px}
-  }
-  .hidden{display:none}
-  .danger{background:#873a3a}
-</style>
+  <style>
+    :root{
+      --bg-pink: #ffd9e6;
+      --white: #ffffff;
+      --black: #0b0b0b;
+      --dark-pink: #c81f6a;
+      --orange-btn: #ff7a00;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 8px 22px rgba(11,11,11,0.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg-pink);
+      color:var(--black);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+    }
+    header{position:fixed;left:0;right:0;top:0;padding:14px 18px;background:transparent;display:flex;align-items:center;gap:12px;z-index:60}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--dark-pink),#ff6fa3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}
+    main{max-width:1100px;margin:100px auto 80px;padding:18px}
+    .card{background:var(--white);padding:18px;border-radius:14px;box-shadow:var(--card-shadow);margin-bottom:18px}
+    h1{margin:0 0 8px}
+    .muted{color:#666;font-size:13px;margin-bottom:12px}
+    form{display:grid;gap:12px}
+    label{font-weight:700;font-size:14px}
+    input[type="text"], input[type="url"], textarea, input[type="password"], input[type="file"]{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #eee;background:#fff;font-size:14px;
+    }
+    textarea{min-height:80px;resize:vertical}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .btn{background:var(--orange-btn);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid #ddd;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .note{font-size:13px;color:#444}
+    .status{padding:10px;border-radius:10px;background:#fff;margin-top:8px;border:1px solid #f0f0f0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .product-card{background:#fff;padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:8px}
+    .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;background:#ffeef7}
+    .actions{display:flex;gap:8px;margin-top:auto}
+    .small{font-size:12px;color:#666}
+    @media(max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:640px){ .grid{grid-template-columns:1fr} .row{flex-direction:column} header{padding:10px} main{margin-top:120px} }
+    .hidden{display:none}
+    .danger{background:#ff5a5a}
+  </style>
 </head>
 <body>
-
-<header id="topbar">
-  <div class="brand">
-    <div class="logo1">
-      <img 
-        src="https://lh3.googleusercontent.com/d/1OvJlNYqx_yvbTsQ1QFJAx-pYJH_a0hTQ=w800" 
-        alt="LEICA Logo1" 
-        style="display:block;margin:auto;max-height:45px;"
-      />
+  <header>
+    <div class="brand">
+      <div class="logo">EL</div>
+      <div>
+        <div style="font-weight:700">LECIA Collection — Manage</div>
+        <div class="small">Tambah / Edit / Hapus produk (akses link + kode)</div>
+      </div>
     </div>
-    <div>
-      <div style="font-weight:700; font-size:20px; font-style: italic;">Dashboard</div>
-    </div>
-  </div>
-</header>
-
-
+  </header>
 
   <main>
     <div class="card" id="gateCard">
-      <h1>Login sebagai Admin</h1>
+      <h1>Masuk ke Halaman Manage</h1>
       <div class="muted">Halaman ini untuk mengelola data produk. Masukkan kode akses halaman untuk membuka form.</div>
       <label>Kode Akses Halaman</label>
       <input id="pagePassword" type="password" placeholder="Masukkan kode akses..." />
       <div style="display:flex;gap:8px;margin-top:8px">
         <button id="btnUnlock" class="btn">Buka Halaman</button>
+        <button id="btnGotoForm" class="btn-ghost" style="display:none">Buka Form Tambah (alternatif)</button>
       </div>
+      <div class="note" style="margin-top:10px">Kode akses sama dengan yang ada di <code>form.html</code>. Jika lupa, lihat file <code>form.html</code> atau ubah <code>PAGE_PASSWORD</code> di file tersebut.</div>
     </div>
 
     <div id="manageUI" class="hidden">
       <div class="card">
         <h2>Tambah / Edit Produk</h2>
+        <div class="muted">Masukkan GitHub PAT setiap sesi (token tidak disimpan). Token diperlukan saat menyimpan perubahan ke repository.</div>
 
         <form id="productForm">
           <div style="display:flex;gap:12px;align-items:center">
-            <div style="flex:1;display:none">
+            <div style="flex:1">
               <label>PAT</label>
-              <input id="ghToken" type="password" placeholder="Token akan otomatis terisi setelah membuka halaman" readonly />
+              <input id="ghToken" type="password" placeholder="Masukkan PAT GitHub (required saat ingin menyimpan)" />
             </div>
             <div style="width:160px">
               <label>Operasi</label>
@@ -174,8 +115,7 @@
               <input id="imgFile" type="file" accept="image/*" />
             </div>
             <div class="col">
-              <label>Atau gunakan URL Gambar</label>
-              <div class="note">Jika menggunakan Upload, maka pastikan kolom dibawah ini kosong.</div>
+              <label>Atau URL Gambar (biarkan kosong jika pakai file upload)</label>
               <input id="imgUrl" type="url" placeholder="https://..." />
             </div>
           </div>
@@ -186,7 +126,7 @@
           <div style="display:flex;gap:8px;margin-top:6px">
             <button id="btnSave" class="btn" type="button">Simpan Perubahan</button>
             <button id="btnClear" class="btn-ghost" type="button">Kosongkan Form</button>
-            <button id="btnReload" type="button" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid #007BFF;color:#007BFF;border-radius:8px;font-weight:600;background:transparent;cursor:pointer;transition:all .3s ease;" onmouseover="this.style.backgroundColor='#007BFF';this.style.color='white';" onmouseout="this.style.backgroundColor='transparent';this.style.color='#007BFF';" onclick="this.querySelector('span').style.transform='rotate(360deg)';this.querySelector('span').style.transition='transform .6s';setTimeout(()=>this.querySelector('span').style.transform='rotate(0deg)',600);"><span style='display:inline-block;font-size:1.1em;'>⟳</span></button>
+            <button id="btnReload" class="btn-ghost" type="button">Refresh Daftar</button>
           </div>
 
           <div id="status" class="status hidden"></div>
@@ -203,17 +143,14 @@
 
   <script>
     // ===========================
-    // CONFIG
+    // CONFIG — UBAH JIKA PERLU
     // ===========================
     const OWNER = 'Nuraddiniy99';
     const REPO = 'LECIACollection';
     const BRANCH = 'main';
     const IMAGES_FOLDER = 'Image';
-    // KODE HALAMAN (sama dengan permintaanmu)
-    const PAGE_PASSWORD = 'aleycia123';
-
-    // TOKEN: akan diisikan otomatis saat password benar
-    const AUTO_PAT = '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';
+    // KODE HALAMAN (sama dengan form.html)
+    const PAGE_PASSWORD = 'kodekamu123'; // <-- sesuaikan jika kamu telah mengganti di form.html
 
     // ===========================
     // UI refs
@@ -305,10 +242,12 @@
     async function loadAndRenderProducts(){
       showStatus('Memuat data produk...');
       try{
+        // get data.json via raw (fast)
         dataProducts = await fetchDataJsonRaw();
         if(!Array.isArray(dataProducts)) dataProducts = [];
       }catch(err){
         console.warn('fetch raw failed, try API metadata', err);
+        // fallback: try to use API content (may need unauthenticated)
         try{
           const meta = await getRepoFile('data.json');
           if(meta && meta.content){
@@ -341,9 +280,9 @@
           <div class="small">${escapeHtml(p.desc || '')}</div>
           <div class="small">ID: ${p.id}</div>
           <div class="actions">
-            <button class="btn btn-edit" data-id="${p.id}">Edit</button>
-            <button class="btn btn-delete danger" data-id="${p.id}" style="background:#ff7a7a;color:#fff;border:0">Hapus</button>
-            <a class="btn-ghost" href="${p.link || '#'}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid #007BFF;color:#007BFF;border-radius:8px;font-weight:600;text-decoration:none;transition:all .3s ease;" onmouseover="this.style.backgroundColor='#007BFF';this.style.color='white';" onmouseout="this.style.backgroundColor='transparent';this.style.color='#007BFF';">Buka Link <span style='font-size:1.1em'>↗</span></a>
+            <button class="btn btn-edit" data-id="${p.id}">✏️ Edit</button>
+            <button class="btn btn-delete danger" data-id="${p.id}" style="background:#ff7a7a;color:#fff;border:0">🗑️ Hapus</button>
+            <a class="btn-ghost" href="${p.link || '#'}" target="_blank">Buka Link</a>
           </div>
         `;
         productsGrid.appendChild(card);
@@ -393,9 +332,6 @@
     btnUnlock.addEventListener('click', ()=>{
       const v = pagePasswordInput.value.trim();
       if(v === PAGE_PASSWORD){
-        // isi token otomatis ke input
-        ghTokenInput.value = AUTO_PAT;
-        // disable editing token field (readonly already set)
         gateCard.style.display = 'none';
         manageUI.classList.remove('hidden');
         loadAndRenderProducts();
@@ -425,12 +361,13 @@
     btnReload.addEventListener('click', ()=> loadAndRenderProducts());
 
     // ===========================
-    // Save / Add / Edit / Delete logic (sama seperti sebelumnya)
+    // Save / Add / Edit / Delete logic
     // ===========================
     async function deleteProduct(id){
       hideStatus();
       try{
         showStatus('Menghapus produk...');
+        // get current data.json metadata (to obtain sha)
         const meta = await getRepoFile('data.json');
         let currentArray = [];
         if(meta && meta.content){
@@ -444,7 +381,7 @@
         const newText = JSON.stringify(newArr, null, 2);
         const newBase64 = btoa(unescape(encodeURIComponent(newText)));
         const token = ghTokenInput.value.trim();
-        if(!token){ alert('Token tidak tersedia. Harus login ulang.'); return; }
+        if(!token){ alert('Masukkan GitHub PAT untuk menghapus.'); return; }
 
         const upd = await updateFileInRepo('data.json', newBase64, token, `Delete product ${id}`, meta.sha);
         if(upd && (upd.content || upd.commit)){
@@ -464,7 +401,7 @@
       hideStatus();
       const mode = modeSelect.value;
       const token = ghTokenInput.value.trim();
-      if(!token){ alert('Token tidak tersedia. Harus membuka halaman dengan password yang benar.'); return; }
+      if(!token){ alert('Masukkan GitHub PAT (required)'); return; }
 
       const name = nameInput.value.trim();
       const desc = descInput.value.trim();
@@ -476,6 +413,7 @@
 
       try{
         showStatus('Mengambil data.json saat ini...');
+        // get metadata to obtain sha and current content
         const meta = await getRepoFile('data.json');
         let currentArray = [];
         if(meta && meta.content){
@@ -483,6 +421,7 @@
           currentArray = JSON.parse(txt || '[]');
           if(!Array.isArray(currentArray)) currentArray = [];
         } else {
+          // no data.json — create new array
           currentArray = [];
         }
 
@@ -505,11 +444,13 @@
         }
 
         if(mode === 'add'){
+          // compute new id
           const newId = (currentArray.length>0) ? (Math.max(...currentArray.map(x=>Number(x.id)||0)) + 1) : 1;
           const newItem = { id: newId, name: name, desc: desc, img: finalImgUrl || '#', link: link };
           currentArray.push(newItem);
           const newText = JSON.stringify(currentArray, null, 2);
           const newBase64 = btoa(unescape(encodeURIComponent(newText)));
+          // either update existing or create new file
           let resp;
           if(meta && meta.sha){
             resp = await updateFileInRepo('data.json', newBase64, token, `Add product ${newId} ${name}`, meta.sha);
@@ -524,16 +465,19 @@
             console.error(resp); showStatus('Gagal menambahkan produk. Cek console.', true);
           }
         } else {
+          // edit mode
           const selId = Number(selectProduct.value);
           if(!selId){ alert('Pilih produk yang ingin diedit'); return; }
           const idx = currentArray.findIndex(x => Number(x.id) === selId);
           if(idx === -1){ showStatus('Produk tidak ditemukan di data.json', true); return; }
+          // update fields (if finalImgUrl present then replace)
           currentArray[idx].name = name;
           currentArray[idx].desc = desc;
           if(finalImgUrl) currentArray[idx].img = finalImgUrl;
           currentArray[idx].link = link;
           const newText = JSON.stringify(currentArray, null, 2);
           const newBase64 = btoa(unescape(encodeURIComponent(newText)));
+          // update
           if(meta && meta.sha){
             const upd = await updateFileInRepo('data.json', newBase64, token, `Edit product ${selId} ${name}`, meta.sha);
             if(upd && (upd.content || upd.commit)){
@@ -555,19 +499,16 @@
     }
 
     btnSave.addEventListener('click', saveProduct);
+
+    // on select change -> load item into form (optional)
     selectProduct.addEventListener('change', ()=>{
       const id = Number(selectProduct.value);
       if(!id) return;
       loadProductToForm(id);
     });
 
-     const topbar = document.getElementById('topbar');
-    window.addEventListener('scroll',()=>{
-      const y = window.scrollY;
-      if(y>8){ topbar.classList.add('scrolled'); }
-      else{ topbar.classList.remove('scrolled'); }
-    },{passive:true});
-    
+    // initial: do nothing until unlocked
+
   </script>
 </body>
 </html>
